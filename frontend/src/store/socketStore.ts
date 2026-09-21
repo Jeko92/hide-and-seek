@@ -3,6 +3,7 @@ import { socket } from '../socket.ts';
 
 interface SocketState {
   connected: boolean;
+  role: 'seeker' | 'hider' | null;
 }
 
 export const useSocketStore = create<SocketState>()(( set ) => {
@@ -14,8 +15,12 @@ export const useSocketStore = create<SocketState>()(( set ) => {
   socket.on('pong', ( data: { receivedAt: number } ) => {
     console.log('received pong', data);
   });
+  socket.on('role', (data: {role: 'seeker' | 'hider'}) => {
+    set({role: data.role});
+  });
 
   return {
     connected: socket.connected,
+    role: null,
   };
 });
