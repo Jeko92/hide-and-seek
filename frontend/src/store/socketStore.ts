@@ -5,6 +5,7 @@ import type { MatchState } from '../types.ts';
 interface SocketState {
   connected: boolean;
   role: 'seeker' | 'hider' | null;
+  matchState: MatchState | null;
 }
 
 export const useSocketStore = create<SocketState>()((set) => {
@@ -20,11 +21,12 @@ export const useSocketStore = create<SocketState>()((set) => {
     set({ role: data.role });
   });
   socket.on('matchState', (state:MatchState) => {
-    console.log('match state', state);
+    set({ matchState: state });
   });
 
   return {
     connected: socket.connected,
     role: null,
+    matchState: null,
   };
 });

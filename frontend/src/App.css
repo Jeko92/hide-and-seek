@@ -182,3 +182,21 @@
     border-right-color: var(--border);
   }
 }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 2rem);
+  grid-template-rows: repeat(10, 2rem);
+  gap: 1px;
+  background: #ccc;
+  width: fit-content;
+}
+.cell {
+  width: 2rem;
+  height: 2rem;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
