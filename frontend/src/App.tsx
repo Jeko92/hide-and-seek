@@ -40,7 +40,12 @@ function App() {
       <h1>Hide and Seek</h1>
       <p>{connected ? 'Connected' : 'Connecting...'}</p>
       <p>{role ? `You are the ${role}` : 'Assigning role...'}</p>
-      {matchState && <Grid match={matchState} />}
+      {matchState && (
+        <>
+          <p>Time left: {matchState.timeRemaining}s</p>
+          <Grid match={matchState} />
+        </>
+      )}
     </div>
   );
 }
