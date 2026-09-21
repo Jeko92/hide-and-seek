@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {
+  GAME_LENGTH_SECONDS,
   GRID_SIZE,
-  Role,
   MatchState,
   Position,
-  GAME_LENGTH_SECONDS,
+  Role,
 } from './game.types';
 
 interface SocketAssignment {
@@ -153,5 +153,19 @@ export class GameService {
     }
 
     return null;
+  }
+
+  resetMatch(socketId: string): MatchState | null {
+    const assignment = this.socketAssignments.get(socketId);
+    if (!assignment) return null;
+
+    const match = this.matches.get(assignment.roomId);
+    if (!match || !match.players.seeker || !match.players.hider) return null;
+
+    match.status = 'running';
+    match.winner = null;
+    match.players.hider.position = { x: GRID_SIZE - 1, y: GRID_SIZE - 1 };
+    match.players.seeker.position = { x: 0, y: 0 };
+    return match;
   }
 }

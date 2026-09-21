@@ -63,4 +63,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.to(match.roomId).emit('matchState', match);
     }
   }
+
+  @SubscribeMessage('playAgain')
+  handlePlayAgain(@ConnectedSocket() client: Socket) {
+    const match = this.gameService.resetMatch(client.id);
+    if (match) {
+      this.server.to(match.roomId).emit('matchState', match);
+      this.gameService.startTimer(match.roomId, (m) => {
+        this.server.to(match.roomId).emit('matchState', m);
+      });
+    }
+  }
 }

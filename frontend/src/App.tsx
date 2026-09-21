@@ -9,6 +9,7 @@ function App() {
   const role = useSocketStore((s) => s.role);
   const matchState = useSocketStore((s) => s.matchState);
   const move = useSocketStore((s) => s.move);
+  const playAgain = useSocketStore((s) => s.playAgain);
 
   useEffect(() => {
     socket.connect();
@@ -47,9 +48,7 @@ function App() {
           <p>
             {matchState.winner === 'seeker' ? 'Seeker wins!' : 'Hider wins!'}
           </p>
-          <button onClick={() => console.log('play again clicked')}>
-            Play Again
-          </button>
+          <button onClick={playAgain}>Play Again</button>
         </div>
       )}
       {matchState && (

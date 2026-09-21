@@ -7,6 +7,7 @@ interface SocketState {
   role: 'seeker' | 'hider' | null;
   matchState: MatchState | null;
   move: (direction: string) => void;
+  playAgain: () => void;
 }
 
 export const useSocketStore = create<SocketState>()((set) => {
@@ -30,5 +31,6 @@ export const useSocketStore = create<SocketState>()((set) => {
     role: null,
     matchState: null,
     move: (direction: string) => socket.emit('move', { direction }),
+    playAgain: () => socket.emit('playAgain'),
   };
 });
