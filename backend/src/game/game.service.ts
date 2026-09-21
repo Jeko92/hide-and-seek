@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { GRID_SIZE, Role, MatchState, Position } from './game.types';
+import {
+  GRID_SIZE,
+  Role,
+  MatchState,
+  Position,
+  GAME_LENGTH_SECONDS,
+} from './game.types';
 
 interface SocketAssignment {
   roomId: string;
@@ -18,6 +24,7 @@ export class GameService {
     left: { x: -1, y: 0 },
     right: { x: 1, y: 0 },
   };
+  private timers = new Map<string, NodeJS.Timeout>();
 
   assignToRoom(socketId: string) {
     if (this.waitingRoomId === null) {
@@ -81,5 +88,23 @@ export class GameService {
 
     player.position = target;
     return match;
+  }
+
+  startTimer(roomId: string, onTick: (match: MatchState) => void) {
+    const match = this.matches.get(roomId);
+    if (!match) return;
+    match.timeRemaining = GAME_LENGTH_SECONDS;
+
+    const timer = setInterval(() => {
+      match.timeRemaining -= 1;
+      if (match.timeRemaining <= 0) {
+        match.status = 'finished';
+        match.winner = 'hider';
+        clearInterval(timer);
+        this.timers.delete(roomId);
+      }
+      onTick(match);
+    }, 1000);
+    this.timers.set(roomId, timer);
   }
 }

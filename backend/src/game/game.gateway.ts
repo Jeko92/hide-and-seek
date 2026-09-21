@@ -28,6 +28,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit('role', { role: assignment.role });
     const match = this.gameService.getMatch(assignment.roomId);
     this.server.to(assignment.roomId).emit('matchState', match);
+
+    if (match?.status === 'running') {
+      this.gameService.startTimer(assignment.roomId, (m) => {
+        this.server.to(assignment.roomId).emit('matchState', m);
+      });
+    }
   }
 
   handleDisconnect(client: Socket) {
