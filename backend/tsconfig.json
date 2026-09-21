@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "types": ["node", "jest"],
     "incremental": true,
     "strictBindCallApply": false
   }

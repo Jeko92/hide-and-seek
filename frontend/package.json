@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc -b",
-    "format": "prettier --write .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,7 +20,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.18.0",
     "@hide-and-seek/eslint-config": "workspace:*",
     "@hide-and-seek/prettier-config": "workspace:*",
     "@hide-and-seek/tsconfig": "workspace:*",
@@ -26,7 +28,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "eslint": "^10.5.0",
+    "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
     "eslint-plugin-react-hooks": "^7.1.1",

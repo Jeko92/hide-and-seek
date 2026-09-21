@@ -9,9 +9,12 @@
   "scripts": {
     "dev": "bun run --filter backend --filter frontend dev",
     "lint": "bun run --filter backend --filter frontend lint",
+    "lint:fix": "bun run --filter backend --filter frontend lint:fix",
     "format": "bun run --filter backend --filter frontend format",
+    "format:fix": "bun run --filter backend --filter frontend format:fix",
     "typecheck": "bun run --filter backend --filter frontend typecheck",
-    "check": "bun run lint && bun run typecheck && bun run format"
+    "check": "bun run lint && bun run typecheck && bun run format",
+    "check:fix": "bun run lint:fix && bun run typecheck && bun run format:fix"
   },
   "allowScripts": {
     "@parcel/watcher@2.6.0": true,
