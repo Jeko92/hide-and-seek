@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import "./App.css";
-import { socket } from "./socket.ts";
+import { useEffect } from 'react';
+import './App.css';
+import { socket } from './socket.ts';
 
 function App() {
   useEffect(() => {
