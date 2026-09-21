@@ -20,6 +20,8 @@ function App() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (matchState?.status === 'finished') return;
+
       const map: Record<string, string> = {
         ArrowUp: 'up',
         ArrowDown: 'down',
@@ -40,6 +42,9 @@ function App() {
       <h1>Hide and Seek</h1>
       <p>{connected ? 'Connected' : 'Connecting...'}</p>
       <p>{role ? `You are the ${role}` : 'Assigning role...'}</p>
+      {matchState?.status === 'finished' && (
+        <p>{matchState.winner === 'seeker' ? 'Seeker wins!' : 'Hider wins!'}</p>
+      )}
       {matchState && (
         <>
           <p>Time left: {matchState.timeRemaining}s</p>
