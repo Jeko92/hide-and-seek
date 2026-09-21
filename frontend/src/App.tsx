@@ -32,6 +32,7 @@ function App() {
     }
 
     window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
   }, [move]);
 
   return (

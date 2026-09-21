@@ -48,6 +48,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() body: {direction: string},
     @ConnectedSocket() client: Socket
   ){
-    console.log(`move from ${client.id}`, body.direction);
+    const match = this.gameService.applyMove(client.id, body.direction);
+    if (match) {
+      this.server.to(match.roomId).emit('matchState', match);
+    }
   }
 }

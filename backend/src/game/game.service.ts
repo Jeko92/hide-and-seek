@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GRID_SIZE, Role, MatchState } from './game.types';
+import { GRID_SIZE, Role, MatchState, Position } from './game.types';
 
 interface SocketAssignment {
   roomId: string;
@@ -12,6 +12,12 @@ export class GameService {
   private waitingRoomId: string | null = null;
   private roomCounter = 0;
   private matches = new Map<string, MatchState>();
+  private readonly deltas: Record<string, Position> = {
+    up: { x: 0, y: -1 },
+    down: { x: 0, y: 1 },
+    left: { x: -1, y: 0 },
+    right: { x: 1, y: 0 },
+  };
 
   assignToRoom(socketId: string) {
     if (this.waitingRoomId === null) {
@@ -46,5 +52,34 @@ export class GameService {
 
   getMatch(roomId: string): MatchState | undefined {
     return this.matches.get(roomId);
+  }
+
+  applyMove(socketId: string, direction: string): MatchState | null {
+    const assignment = this.socketAssignments.get(socketId);
+    if (!assignment) return null;
+
+    const match = this.matches.get(assignment.roomId);
+    if (!match || match.status !== 'running') return null;
+
+    const delta = this.deltas[direction];
+    if (!delta) return null;
+
+    const player = match.players[assignment.role]!;
+    const target = {
+      x: player.position.x + delta.x,
+      y: player.position.y + delta.y,
+    };
+
+    if (
+      target.x < 0 ||
+      target.x >= GRID_SIZE ||
+      target.y < 0 ||
+      target.y >= GRID_SIZE
+    ) {
+      return null;
+    }
+
+    player.position = target;
+    return match;
   }
 }
