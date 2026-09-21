@@ -21,9 +21,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly gameService: GameService) {}
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
     const assignment = this.gameService.assignToRoom(client.id);
+    await client.join(assignment.roomId);
+    client.emit('role', { role: assignment.role });
     console.log('assigned to room', assignment);
   }
 
