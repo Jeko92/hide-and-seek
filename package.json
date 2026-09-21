@@ -3,10 +3,15 @@
   "private": true,
   "workspaces": [
     "backend",
-    "frontend"
+    "frontend",
+    "packages/*"
   ],
   "scripts": {
-    "dev": "bun run --filter backend --filter frontend dev"
+    "dev": "bun run --filter backend --filter frontend dev",
+    "lint": "bun run --filter backend --filter frontend lint",
+    "format": "bun run --filter backend --filter frontend format",
+    "typecheck": "bun run --filter backend --filter frontend typecheck",
+    "check": "bun run lint && bun run typecheck && bun run format"
   },
   "allowScripts": {
     "@parcel/watcher@2.6.0": true,
