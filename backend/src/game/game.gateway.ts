@@ -1,6 +1,7 @@
 import {
+  MessageBody,
   OnGatewayConnection,
-  OnGatewayDisconnect,
+  OnGatewayDisconnect, SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -24,5 +25,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+  }
+
+  @SubscribeMessage('ping')
+  handlePing(@MessageBody() payload: unknown) {
+    console.log('received ping:', payload);
   }
 }
