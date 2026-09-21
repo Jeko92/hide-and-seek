@@ -1,7 +1,9 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
-  OnGatewayDisconnect, SubscribeMessage,
+  OnGatewayDisconnect,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -28,7 +30,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('ping')
-  handlePing(@MessageBody() payload: unknown) {
+  handlePing(
+    @MessageBody() payload: unknown,
+    @ConnectedSocket() client: Socket,
+  ) {
     console.log('received ping:', payload);
+    client.emit('pong', { receivedAt: Date.now() });
   }
 }

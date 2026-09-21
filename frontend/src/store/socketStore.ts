@@ -11,6 +11,9 @@ export const useSocketStore = create<SocketState>()(( set ) => {
     socket.emit('ping', { hello: 'world' });
   });
   socket.on('disconnect', () => set({ connected: false }));
+  socket.on('pong', ( data: { receivedAt: number } ) => {
+    console.log('received pong', data);
+  });
 
   return {
     connected: socket.connected,
