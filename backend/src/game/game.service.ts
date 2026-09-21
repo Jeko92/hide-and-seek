@@ -132,6 +132,15 @@ export class GameService {
     const match = this.matches.get(assignment.roomId);
     if (!match) return null;
 
+    if (
+      this.waitingRoomId === assignment.roomId &&
+      match.status === 'waiting'
+    ) {
+      this.waitingRoomId = null;
+      this.matches.delete(assignment.roomId);
+      return null;
+    }
+
     if (match.status === 'running') {
       match.status = 'finished';
       match.winner = assignment.role === 'seeker' ? 'hider' : 'seeker';

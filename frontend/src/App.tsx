@@ -43,7 +43,14 @@ function App() {
       <p>{connected ? 'Connected' : 'Connecting...'}</p>
       <p>{role ? `You are the ${role}` : 'Assigning role...'}</p>
       {matchState?.status === 'finished' && (
-        <p>{matchState.winner === 'seeker' ? 'Seeker wins!' : 'Hider wins!'}</p>
+        <div>
+          <p>
+            {matchState.winner === 'seeker' ? 'Seeker wins!' : 'Hider wins!'}
+          </p>
+          <button onClick={() => console.log('play again clicked')}>
+            Play Again
+          </button>
+        </div>
       )}
       {matchState && (
         <>
