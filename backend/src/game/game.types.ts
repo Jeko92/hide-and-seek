@@ -1,4 +1,4 @@
-export type Role = 'seaker' | 'hider';
+export type Role = 'seeker' | 'hider';
 export type GameStatus = 'waiting' | 'running' | 'finished';
 
 export interface Position {
@@ -7,7 +7,7 @@ export interface Position {
 }
 
 export interface PlayerInfo {
-	sockedId: string,
+	socketId: string,
 	position: Position
 }
 
