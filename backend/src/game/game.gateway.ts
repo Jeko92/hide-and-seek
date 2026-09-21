@@ -38,6 +38,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+    const match = this.gameService.handleDisconnect(client.id);
+    if (match) {
+      this.server.to(match.roomId).emit('matchState', match);
+    }
   }
 
   @SubscribeMessage('ping')

@@ -123,4 +123,26 @@ export class GameService {
     }, 1000);
     this.timers.set(roomId, timer);
   }
+
+  handleDisconnect(socketId: string): MatchState | null {
+    const assignment = this.socketAssignments.get(socketId);
+    this.socketAssignments.delete(socketId);
+    if (!assignment) return null;
+
+    const match = this.matches.get(assignment.roomId);
+    if (!match) return null;
+
+    if (match.status === 'running') {
+      match.status = 'finished';
+      match.winner = assignment.role === 'seeker' ? 'hider' : 'seeker';
+      const timer = this.timers.get(match.roomId);
+      if (timer) {
+        clearInterval(timer);
+        this.timers.delete(match.roomId);
+      }
+      return match;
+    }
+
+    return null;
+  }
 }
