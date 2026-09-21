@@ -42,4 +42,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('received ping:', payload);
     client.emit('pong', { receivedAt: Date.now() });
   }
+
+  @SubscribeMessage('move')
+  handleMove(
+    @MessageBody() body: {direction: string},
+    @ConnectedSocket() client: Socket
+  ){
+    console.log(`move from ${client.id}`, body.direction);
+  }
 }
