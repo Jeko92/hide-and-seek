@@ -17,6 +17,22 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const onKeyDown = (e:KeyboardEvent) =>{
+      const map: Record<string,  string> = {
+        ArrowUp: 'up',
+        ArrowDown: 'down',
+        ArrowLeft: 'left',
+        ArrowRight: 'right'
+      }
+
+      const direction = map[e.key];
+      if(direction) console.log('direction pressed', direction);
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+  }, []);
+
   return (
     <div>
       <h1>Hide and Seek</h1>
