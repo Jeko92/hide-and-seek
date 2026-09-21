@@ -1,0 +1,22 @@
+{
+  "types": {
+    "feat": { "description": "A new feature or capability." },
+    "fix": { "description": "A bug fix." },
+    "refactor": { "description": "Restructures code without changing behavior." },
+    "chore": { "description": "Tooling, config, or maintenance work." },
+    "docs": { "description": "Documentation-only changes." },
+    "style": {
+      "description": "Formatting, missing semi-colons, whitespace (no logic changes)"
+    }
+  },
+  "commonScopes": {
+    "repo": { "description": "Repository setup and tooling." },
+    "gateway": { "description": "NestJS WebSocket gateway (GameGateway)." },
+    "game": { "description": "GameService: match state and rules." },
+    "frontend": { "description": "React app shell and UI." },
+    "store": { "description": "Zustand socket/game store." }
+  },
+  "footerTypes": {
+    "Co-authored-by": { "description": "The specified person co-authored the commit's changes." }
+  }
+}
