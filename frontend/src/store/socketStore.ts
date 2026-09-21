@@ -1,5 +1,6 @@
 import { create } from 'zustand/react';
 import { socket } from '../socket.ts';
+import type { MatchState } from '../types.ts';
 
 interface SocketState {
   connected: boolean;
@@ -17,6 +18,9 @@ export const useSocketStore = create<SocketState>()((set) => {
   });
   socket.on('role', (data: { role: 'seeker' | 'hider' }) => {
     set({ role: data.role });
+  });
+  socket.on('matchState', (state:MatchState) => {
+    console.log('match state', state);
   });
 
   return {
