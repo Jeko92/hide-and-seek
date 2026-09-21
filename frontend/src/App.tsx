@@ -8,6 +8,7 @@ function App() {
   const connected = useSocketStore((s) => s.connected);
   const role = useSocketStore((s) => s.role);
   const matchState = useSocketStore((s) => s.matchState);
+  const move = useSocketStore((s) => s.move);
 
   useEffect(() => {
     socket.connect();
@@ -27,11 +28,11 @@ function App() {
       }
 
       const direction = map[e.key];
-      if(direction) console.log('direction pressed', direction);
+      if (direction) move(direction);
     }
 
     window.addEventListener('keydown', onKeyDown);
-  }, []);
+  }, [move]);
 
   return (
     <div>
