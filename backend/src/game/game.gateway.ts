@@ -25,10 +25,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		console.log(`Client connected: ${client.id}`);
 		const assignment = this.gameService.assignToRoom(client.id);
 		await client.join(assignment.roomId);
-		console.log(this.gameService.getMatch(assignment.roomId));
 		client.emit('role', { role: assignment.role });
-		console.log('assigned to room', assignment);
-		this.server.to(assignment.roomId).emit('matchState', { placeholder: true });
+		const match = this.gameService.getMatch(assignment.roomId);
+		this.server.to(assignment.roomId).emit('matchState', match);
 	}
 
 	handleDisconnect(client: Socket) {
