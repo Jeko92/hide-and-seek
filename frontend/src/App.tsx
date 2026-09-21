@@ -43,6 +43,7 @@ function App() {
       <h1>Hide and Seek</h1>
       <p>{connected ? 'Connected' : 'Connecting...'}</p>
       <p>{role ? `You are the ${role}` : 'Assigning role...'}</p>
+      {matchState && <p>Room: {matchState.roomId.replace('room-', '')}</p>}
       {matchState?.status === 'finished' && (
         <div>
           <p>
