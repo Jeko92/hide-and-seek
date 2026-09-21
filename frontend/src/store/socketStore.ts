@@ -6,17 +6,17 @@ interface SocketState {
   role: 'seeker' | 'hider' | null;
 }
 
-export const useSocketStore = create<SocketState>()(( set ) => {
+export const useSocketStore = create<SocketState>()((set) => {
   socket.on('connect', () => {
     set({ connected: true });
     socket.emit('ping', { hello: 'world' });
   });
   socket.on('disconnect', () => set({ connected: false }));
-  socket.on('pong', ( data: { receivedAt: number } ) => {
+  socket.on('pong', (data: { receivedAt: number }) => {
     console.log('received pong', data);
   });
-  socket.on('role', (data: {role: 'seeker' | 'hider'}) => {
-    set({role: data.role});
+  socket.on('role', (data: { role: 'seeker' | 'hider' }) => {
+    set({ role: data.role });
   });
 
   return {

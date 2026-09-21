@@ -3,7 +3,7 @@ import './App.css';
 import { socket } from './socket.ts';
 import { useSocketStore } from './store/socketStore.ts';
 
-function App () {
+function App() {
   const connected = useSocketStore((s) => s.connected);
   const role = useSocketStore((s) => s.role);
 
