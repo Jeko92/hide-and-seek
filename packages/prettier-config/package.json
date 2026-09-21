@@ -1,0 +1,8 @@
+{
+  "name": "@hide-and-seek/prettier-config",
+  "version": "1.0.0",
+  "description": "Shared Prettier configuration common to both backend and frontend",
+  "main": "index.json",
+  "private": true,
+  "license": "UNLICENSED"
+}

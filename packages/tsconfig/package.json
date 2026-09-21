@@ -1,0 +1,8 @@
+{
+  "name": "@hide-and-seek/tsconfig",
+  "version": "1.0.0",
+  "description": "Shared TypeScript compiler options common to both backend and frontend",
+  "main": "base.json",
+  "private": true,
+  "license": "UNLICENSED"
+}
