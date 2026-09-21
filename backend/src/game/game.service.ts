@@ -87,6 +87,22 @@ export class GameService {
     }
 
     player.position = target;
+    const seekerPos = match.players.seeker?.position;
+    const hiderPos = match.players.hider?.position;
+    if (
+      seekerPos &&
+      hiderPos &&
+      seekerPos.x === hiderPos.x &&
+      seekerPos.y === hiderPos.y
+    ) {
+      match.status = 'finished';
+      match.winner = 'seeker';
+      const timer = this.timers.get(match.roomId);
+      if (timer) {
+        clearInterval(timer);
+        this.timers.delete(match.roomId);
+      }
+    }
     return match;
   }
 
