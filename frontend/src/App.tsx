@@ -19,17 +19,17 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const onKeyDown = (e:KeyboardEvent) =>{
-      const map: Record<string,  string> = {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const map: Record<string, string> = {
         ArrowUp: 'up',
         ArrowDown: 'down',
         ArrowLeft: 'left',
-        ArrowRight: 'right'
-      }
+        ArrowRight: 'right',
+      };
 
       const direction = map[e.key];
       if (direction) move(direction);
-    }
+    };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);

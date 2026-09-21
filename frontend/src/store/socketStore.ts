@@ -21,7 +21,7 @@ export const useSocketStore = create<SocketState>()((set) => {
   socket.on('role', (data: { role: 'seeker' | 'hider' }) => {
     set({ role: data.role });
   });
-  socket.on('matchState', (state:MatchState) => {
+  socket.on('matchState', (state: MatchState) => {
     set({ matchState: state });
   });
 
