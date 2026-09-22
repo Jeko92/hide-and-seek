@@ -41,7 +41,7 @@ export default function CreateRoom () {
     <div>
       <div>
         <label htmlFor='room-name'>Name a Room</label>
-        <input type='text' value={roomName}
+        <input id='room-name' type='text' value={roomName}
                onChange={( e ) => {
                  setRoomName(e.target.value);
                  clearJoinError();
