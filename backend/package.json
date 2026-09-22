@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/platform-socket.io": "^11.1.27",
     "@nestjs/websockets": "^11.1.27",
+    "dotenv": "^18.0.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.3"
@@ -70,7 +71,11 @@
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": ["ts-jest", { "tsconfig": { "rootDir": "./src" } }]
+      "^.+\\.(t|j)s$": ["ts-jest", {
+        "tsconfig": {
+          "rootDir": "./src"
+        }
+      }]
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: hide-and-seek-backend
+    runtime: image
+    image:
+      url: docker.io/jeko92/hide-and-seek-backend:latest
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: FRONTEND_URL
+        value: https://jeko92.github.io
