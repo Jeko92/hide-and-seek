@@ -129,6 +129,32 @@ export class GameService {
     return match.wallEdges.includes(this.edgeKey(from, to));
   }
 
+  private isIceCell(pos: Position, match: MatchState): boolean {
+    return match.iceCells.some((c) => c.x === pos.x && c.y === pos.y);
+  }
+
+  private generateIceCells(gridSize: number, avoid: Position[]): Position[] {
+    const avoidKeys = new Set(avoid.map((p) => `${p.x},${p.y}`));
+    const targetCount = Math.floor(gridSize * 0.8);
+    const iceCells: Position[] = [];
+    const usedKeys = new Set<string>();
+
+    let attempts = 0;
+    while (iceCells.length < targetCount && attempts < targetCount * 20) {
+      attempts++;
+      const candidate: Position = {
+        x: Math.floor(Math.random() * gridSize),
+        y: Math.floor(Math.random() * gridSize),
+      };
+      const key = `${candidate.x},${candidate.y}`;
+      if (avoidKeys.has(key) || usedKeys.has(key)) continue;
+      usedKeys.add(key);
+      iceCells.push(candidate);
+    }
+
+    return iceCells;
+  }
+
   assignToRoom(socketId: string) {
     if (this.waitingRoomId === null) {
       const roomId = `room-${++this.roomCounter}`;
@@ -145,6 +171,10 @@ export class GameService {
         timeRemaining: 0,
         winner: null,
         wallEdges: this.generateWalls(GRID_SIZE, [
+          { x: GRID_SIZE - 1, y: GRID_SIZE - 1 },
+          { x: 0, y: 0 },
+        ]),
+        iceCells: this.generateIceCells(GRID_SIZE, [
           { x: GRID_SIZE - 1, y: GRID_SIZE - 1 },
           { x: 0, y: 0 },
         ]),
@@ -180,6 +210,10 @@ export class GameService {
           { x: GRID_SIZE - 1, y: GRID_SIZE - 1 },
           { x: 0, y: 0 },
         ]),
+        iceCells: this.generateIceCells(GRID_SIZE, [
+          { x: GRID_SIZE - 1, y: GRID_SIZE - 1 },
+          { x: 0, y: 0 },
+        ]),
       });
       return { role: 'hider' };
     }
@@ -210,6 +244,7 @@ export class GameService {
     if (!delta) return null;
 
     const player = match.players[assignment.role]!;
+    const startedAt = player.position;
     const target = {
       x: player.position.x + delta.x,
       y: player.position.y + delta.y,
@@ -228,23 +263,50 @@ export class GameService {
       return null;
     }
 
-    player.position = target;
-    const seekerPos = match.players.seeker?.position;
-    const hiderPos = match.players.hider?.position;
-    if (
-      seekerPos &&
-      hiderPos &&
-      seekerPos.x === hiderPos.x &&
-      seekerPos.y === hiderPos.y
-    ) {
-      match.status = 'finished';
-      match.winner = 'seeker';
-      const timer = this.timers.get(match.roomId);
-      if (timer) {
-        clearInterval(timer);
-        this.timers.delete(match.roomId);
+    while (true) {
+      player.position = target;
+
+      const seekerPos = match.players.seeker?.position;
+      const hiderPos = match.players.hider?.position;
+      if (
+        seekerPos &&
+        hiderPos &&
+        seekerPos.x === hiderPos.x &&
+        seekerPos.y === hiderPos.y
+      ) {
+        match.status = 'finished';
+        match.winner = 'seeker';
+        const timer = this.timers.get(match.roomId);
+        if (timer) {
+          clearInterval(timer);
+          this.timers.delete(match.roomId);
+        }
+        return match;
       }
+
+      if (!this.isIceCell(player.position, match)) {
+        break;
+      }
+
+      const nextTarget = {
+        x: player.position.x + delta.x,
+        y: player.position.y + delta.y,
+      };
+      const nextOutOfBounds =
+        nextTarget.x < 0 ||
+        nextTarget.x >= GRID_SIZE ||
+        nextTarget.y < 0 ||
+        nextTarget.y >= GRID_SIZE;
+
+      if (nextOutOfBounds || this.isBlocked(player.position, nextTarget, match)) {
+        break;
+      }
+
+      target.x = nextTarget.x;
+      target.y = nextTarget.y;
     }
+
+    void startedAt;
     return match;
   }
 
