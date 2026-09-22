@@ -244,7 +244,6 @@ export class GameService {
     if (!delta) return null;
 
     const player = match.players[assignment.role]!;
-    const startedAt = player.position;
     const target = {
       x: player.position.x + delta.x,
       y: player.position.y + delta.y,
@@ -306,7 +305,6 @@ export class GameService {
       target.y = nextTarget.y;
     }
 
-    void startedAt;
     return match;
   }
 
@@ -353,6 +351,11 @@ export class GameService {
         clearInterval(timer);
         this.timers.delete(match.roomId);
       }
+      // Remove the match so its room name is free for a fresh game. The
+      // object itself is still returned below (by reference) so the
+      // gateway can broadcast this final state to whoever's still
+      // connected — deleting it from the Map doesn't affect that.
+      this.matches.delete(assignment.roomId);
       return match;
     }
 
