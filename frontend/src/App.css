@@ -219,3 +219,15 @@
 .cell.wall-left {
   border-left-color: #2b2b2b;
 }
+.cell.ice {
+  background: #cdeffd;
+}
+.player-marker {
+  font-size: 1.4rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cell.ice {
+    background: #113a4a;
+  }
+}

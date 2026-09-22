@@ -29,18 +29,31 @@ export function Grid({ match }: { match: MatchState }) {
         match.players.hider?.position.x === x &&
         match.players.hider?.position.y === y;
 
-      const wallClasses = [
+      const isIce = match.iceCells.some((c) => c.x === x && c.y === y);
+
+      const cellClasses = [
         hasWall(match.wallEdges, x, y, x, y - 1) ? 'wall-top' : '',
         hasWall(match.wallEdges, x, y, x + 1, y) ? 'wall-right' : '',
         hasWall(match.wallEdges, x, y, x, y + 1) ? 'wall-bottom' : '',
         hasWall(match.wallEdges, x, y, x - 1, y) ? 'wall-left' : '',
+        isIce ? 'ice' : '',
       ]
         .filter(Boolean)
         .join(' ');
 
+      const content = isSeeker ? (
+        <span className="player-marker">🔍</span>
+      ) : isHider ? (
+        <span className="player-marker">🙈</span>
+      ) : isIce ? (
+        '❄️'
+      ) : (
+        ''
+      );
+
       cells.push(
-        <div key={`${x}-${y}`} className={`cell ${wallClasses}`}>
-          {isSeeker ? 'S' : isHider ? 'H' : ''}
+        <div key={`${x}-${y}`} className={`cell ${cellClasses}`}>
+          {content}
         </div>,
       );
     }
