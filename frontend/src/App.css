@@ -201,4 +201,21 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  box-sizing: border-box;
+  border-top: 0.25rem solid transparent;
+  border-right: 0.25rem solid transparent;
+  border-bottom: 0.25rem solid transparent;
+  border-left: 0.25rem solid transparent;
+}
+.cell.wall-top {
+  border-top-color: #2b2b2b;
+}
+.cell.wall-right {
+  border-right-color: #2b2b2b;
+}
+.cell.wall-bottom {
+  border-bottom-color: #2b2b2b;
+}
+.cell.wall-left {
+  border-left-color: #2b2b2b;
 }

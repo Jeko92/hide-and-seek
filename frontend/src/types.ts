@@ -20,6 +20,7 @@ export interface MatchState {
   };
   timeRemaining: number;
   winner: Role | null;
+  wallEdges: string[];
 }
 
 export const GRID_SIZE = 10;

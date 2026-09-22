@@ -26,6 +26,109 @@ export class GameService {
   };
   private timers = new Map<string, NodeJS.Timeout>();
 
+  private edgeKey(a: Position, b: Position): string {
+    const [p1, p2] =
+      a.y < b.y || (a.y === b.y && a.x < b.x) ? [a, b] : [b, a];
+    return `${p1.x},${p1.y}-${p2.x},${p2.y}`;
+  }
+
+  private neighbors(pos: Position, gridSize: number): Position[] {
+    return [
+      { x: pos.x, y: pos.y - 1 },
+      { x: pos.x, y: pos.y + 1 },
+      { x: pos.x - 1, y: pos.y },
+      { x: pos.x + 1, y: pos.y },
+    ].filter((p) => p.x >= 0 && p.x < gridSize && p.y >= 0 && p.y < gridSize);
+  }
+
+  private wouldFullyEnclose(
+    pos: Position,
+    gridSize: number,
+    wallEdges: Set<string>,
+  ): boolean {
+    const cellNeighbors = this.neighbors(pos, gridSize);
+    return cellNeighbors.every((n) => wallEdges.has(this.edgeKey(pos, n)));
+  }
+
+  private isConnected(gridSize: number, wallEdges: Set<string>): boolean {
+    const visited = new Set<string>(['0,0']);
+    const queue: Position[] = [{ x: 0, y: 0 }];
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      for (const neighbor of this.neighbors(current, gridSize)) {
+        const key = `${neighbor.x},${neighbor.y}`;
+        if (visited.has(key)) continue;
+        if (wallEdges.has(this.edgeKey(current, neighbor))) continue;
+        visited.add(key);
+        queue.push(neighbor);
+      }
+    }
+
+    return visited.size === gridSize * gridSize;
+  }
+
+  private generateWalls(gridSize: number, avoid: Position[]): string[] {
+    const wallEdges = new Set<string>();
+    const avoidKeys = new Set(avoid.map((p) => `${p.x},${p.y}`));
+    const directionKeys = Object.keys(this.deltas);
+    const numPieces = Math.floor(gridSize * 1.5);
+
+    for (let i = 0; i < numPieces; i++) {
+      let current: Position = {
+        x: Math.floor(Math.random() * gridSize),
+        y: Math.floor(Math.random() * gridSize),
+      };
+      const pieceLength = 1 + Math.floor(Math.random() * 4);
+      let directionKey =
+        directionKeys[Math.floor(Math.random() * directionKeys.length)];
+
+      for (let step = 0; step < pieceLength; step++) {
+        if (step > 0 && Math.random() < 0.3) {
+          directionKey =
+            directionKeys[Math.floor(Math.random() * directionKeys.length)];
+        }
+        const delta = this.deltas[directionKey];
+        const next = { x: current.x + delta.x, y: current.y + delta.y };
+
+        if (
+          next.x < 0 ||
+          next.x >= gridSize ||
+          next.y < 0 ||
+          next.y >= gridSize
+        ) {
+          break;
+        }
+
+        const currentKey = `${current.x},${current.y}`;
+        const nextKey = `${next.x},${next.y}`;
+        if (avoidKeys.has(currentKey) || avoidKeys.has(nextKey)) {
+          break;
+        }
+
+        const key = this.edgeKey(current, next);
+        wallEdges.add(key);
+
+        if (
+          this.wouldFullyEnclose(current, gridSize, wallEdges) ||
+          this.wouldFullyEnclose(next, gridSize, wallEdges) ||
+          !this.isConnected(gridSize, wallEdges)
+        ) {
+          wallEdges.delete(key);
+          break;
+        }
+
+        current = next;
+      }
+    }
+
+    return Array.from(wallEdges);
+  }
+
+  private isBlocked(from: Position, to: Position, match: MatchState): boolean {
+    return match.wallEdges.includes(this.edgeKey(from, to));
+  }
+
   assignToRoom(socketId: string) {
     if (this.waitingRoomId === null) {
       const roomId = `room-${++this.roomCounter}`;
@@ -41,6 +144,10 @@ export class GameService {
         },
         timeRemaining: 0,
         winner: null,
+        wallEdges: this.generateWalls(GRID_SIZE, [
+          { x: GRID_SIZE - 1, y: GRID_SIZE - 1 },
+          { x: 0, y: 0 },
+        ]),
       });
       return assignment;
     }
@@ -69,6 +176,10 @@ export class GameService {
         players: { hider: { socketId, position: { x: GRID_SIZE - 1, y: GRID_SIZE - 1 } }, seeker: null },
         timeRemaining: 0,
         winner: null,
+        wallEdges: this.generateWalls(GRID_SIZE, [
+          { x: GRID_SIZE - 1, y: GRID_SIZE - 1 },
+          { x: 0, y: 0 },
+        ]),
       });
       return { role: 'hider' };
     }
@@ -110,6 +221,10 @@ export class GameService {
       target.y < 0 ||
       target.y >= GRID_SIZE
     ) {
+      return null;
+    }
+
+    if (this.isBlocked(player.position, target, match)) {
       return null;
     }
 
