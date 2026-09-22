@@ -15,16 +15,20 @@ export default function CreateRoom () {
   const [ roomName, setRoomName ] = useState('');
   const clearJoinError = useSocketStore((s) => s.clearJoinError);
 
-  const createRoom = () => {
-    console.log('Room name to be created:', roomName);
-    socket.emit('joinRoom', { roomName });
-  };
-
   const generateRandomRoomName = () =>{
     const a = ROOM_NAME_WORDS[Math.floor(Math.random() * ROOM_NAME_WORDS.length)];
     const b = ROOM_NAME_WORDS[Math.floor(Math.random() * ROOM_NAME_WORDS.length)];
     return `${a}-${b}`;
   }
+
+  const createRoom = () => {
+    // Blank (or whitespace-only) input falls back to a generated name
+    // instead of joining/creating a room with an empty roomName.
+    const name = roomName.trim() === '' ? generateRandomRoomName() : roomName;
+    setRoomName(name);
+    console.log('Room name to be created:', name);
+    socket.emit('joinRoom', { roomName: name });
+  };
 
   const createRandomRoom = () => {
     const name = generateRandomRoomName();
