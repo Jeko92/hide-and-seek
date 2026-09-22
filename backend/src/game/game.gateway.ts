@@ -23,17 +23,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
-    const assignment = this.gameService.assignToRoom(client.id);
-    await client.join(assignment.roomId);
-    client.emit('role', { role: assignment.role });
-    const match = this.gameService.getMatch(assignment.roomId);
-    this.server.to(assignment.roomId).emit('matchState', match);
-
-    if (match?.status === 'running') {
-      this.gameService.startTimer(assignment.roomId, (m) => {
-        this.server.to(assignment.roomId).emit('matchState', m);
-      });
-    }
+    // const assignment = this.gameService.assignToRoom(client.id);
+    // await client.join(assignment.roomId);
+    // client.emit('role', { role: assignment.role });
+    // const match = this.gameService.getMatch(assignment.roomId);
+    // this.server.to(assignment.roomId).emit('matchState', match);
+    //
+    // if (match?.status === 'running') {
+    //   this.gameService.startTimer(assignment.roomId, (m) => {
+    //     this.server.to(assignment.roomId).emit('matchState', m);
+    //   });
+    // }
   }
 
   handleDisconnect(client: Socket) {
@@ -51,6 +51,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     console.log('received ping:', payload);
     client.emit('pong', { receivedAt: Date.now() });
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(@MessageBody() body: {roomName: string}, @ConnectedSocket() client: Socket){
+    console.log('join room requested:', body.roomName, client.id);
+    const result = this.gameService.joinNamedRoom(client.id, body.roomName);
+
+    if('error' in result){
+      client.emit('joinError', {reason: result.error})
+      return;
+    }
+    client.join(body.roomName);
+    client.emit('role', { role: result.role });
+    const match = this.gameService.getMatch(body.roomName);
+    this.server.to(body.roomName).emit('matchState', match);
   }
 
   @SubscribeMessage('move')

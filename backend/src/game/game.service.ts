@@ -57,6 +57,33 @@ export class GameService {
     return assignment;
   }
 
+  joinNamedRoom(socketId: string, roomName: string): { role: Role } | { error: 'full' } {
+    const existing = this.matches.get(roomName);
+
+    if(!existing){
+      const assignment = { roomId: roomName, role: 'hider' as Role };
+      this.socketAssignments.set(socketId, assignment);
+      this.matches.set(roomName, {
+        roomId: roomName,
+        status: 'waiting',
+        players: { hider: { socketId, position: { x: GRID_SIZE - 1, y: GRID_SIZE - 1 } }, seeker: null },
+        timeRemaining: 0,
+        winner: null,
+      });
+      return { role: 'hider' };
+    }
+
+    if (existing.players.seeker === null) {
+      const assignment = { roomId: roomName, role: 'seeker' as Role };
+      this.socketAssignments.set(socketId, assignment);
+      existing.players.seeker = { socketId, position: {x:0, y:0 } };
+      existing.status = 'running';
+      return { role: 'seeker' };
+    }
+
+    return { error: 'full' };
+  }
+
   getMatch(roomId: string): MatchState | undefined {
     return this.matches.get(roomId);
   }

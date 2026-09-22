@@ -3,6 +3,7 @@ import './App.css';
 import { socket } from './socket.ts';
 import { useSocketStore } from './store/socketStore.ts';
 import { Grid } from './components/Grid.tsx';
+import CreateRoom from './components/CreateRoom.tsx';
 
 function App() {
   const connected = useSocketStore((s) => s.connected);
@@ -43,6 +44,7 @@ function App() {
       <h1>Hide and Seek</h1>
       <p>{connected ? 'Connected' : 'Connecting...'}</p>
       <p>{role ? `You are the ${role}` : 'Assigning role...'}</p>
+      {!role && <CreateRoom/>}
       {matchState && <p>Room: {matchState.roomId.replace('room-', '')}</p>}
       {matchState?.status === 'finished' && (
         <div>
