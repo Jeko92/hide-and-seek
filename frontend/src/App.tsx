@@ -11,6 +11,7 @@ function App() {
   const matchState = useSocketStore((s) => s.matchState);
   const move = useSocketStore((s) => s.move);
   const playAgain = useSocketStore((s) => s.playAgain);
+  const joinError = useSocketStore((s) => s.joinError);
 
   useEffect(() => {
     socket.connect();
@@ -44,6 +45,7 @@ function App() {
       <h1>Hide and Seek</h1>
       <p>{connected ? 'Connected' : 'Connecting...'}</p>
       <p>{role ? `You are the ${role}` : 'Assigning role...'}</p>
+      {joinError && <p>That room is already full — try a different name.</p>}
       {!role && <CreateRoom/>}
       {matchState && <p>Room: {matchState.roomId.replace('room-', '')}</p>}
       {matchState?.status === 'finished' && (

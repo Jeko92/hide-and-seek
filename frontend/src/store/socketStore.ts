@@ -8,6 +8,8 @@ interface SocketState {
   matchState: MatchState | null;
   move: (direction: string) => void;
   playAgain: () => void;
+  joinError: string | null;
+  clearJoinError: () => void;
 }
 
 export const useSocketStore = create<SocketState>()((set) => {
@@ -20,11 +22,12 @@ export const useSocketStore = create<SocketState>()((set) => {
     console.log('received pong', data);
   });
   socket.on('role', (data: { role: 'seeker' | 'hider' }) => {
-    set({ role: data.role });
+    set({ role: data.role, joinError: null });
   });
   socket.on('matchState', (state: MatchState) => {
     set({ matchState: state });
   });
+  socket.on('joinError', (data: { reason: string }) => set({ joinError: data.reason }));
 
   return {
     connected: socket.connected,
@@ -32,5 +35,7 @@ export const useSocketStore = create<SocketState>()((set) => {
     matchState: null,
     move: (direction: string) => socket.emit('move', { direction }),
     playAgain: () => socket.emit('playAgain'),
+    joinError: null,
+    clearJoinError: () => set({ joinError: null }),
   };
 });

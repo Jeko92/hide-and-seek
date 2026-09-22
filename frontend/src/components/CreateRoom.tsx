@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { socket } from '../socket.ts';
+import { useSocketStore } from '../store/socketStore.ts';
 
 const ROOM_NAME_WORDS = [
   'shadow', 'whisper', 'hollow', 'thicket', 'lantern', 'acorn', 'willow',
@@ -12,6 +13,7 @@ const ROOM_NAME_WORDS = [
 
 export default function CreateRoom () {
   const [ roomName, setRoomName ] = useState('');
+  const clearJoinError = useSocketStore((s) => s.clearJoinError);
 
   const createRoom = () => {
     console.log('Room name to be created:', roomName);
@@ -36,7 +38,10 @@ export default function CreateRoom () {
       <div>
         <label htmlFor='room-name'>Name a Room</label>
         <input type='text' value={roomName}
-               onChange={( e ) => setRoomName(e.target.value)}/>
+               onChange={( e ) => {
+                 setRoomName(e.target.value);
+                 clearJoinError();
+               }}/>
       </div>
       <div>
         <button onClick={createRoom}>Create</button>
